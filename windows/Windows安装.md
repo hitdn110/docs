@@ -64,6 +64,8 @@ Windows 映像文件格式（wim）是一个基于文件的磁盘映像格式。
 
 电子软件下载文件（ESD）是微软在开发Windows10时推出的文件格式，仅用于推送Windows大版本更新，没有官方工具可以更改ESD文件，也不能像wim文件一样被挂载，而且官方的ESD文件含有加密，虽然密钥每次很快就被发现。ESD压缩比例极高，以Windows10 1607 x64版为例，一个完整的ISO安装映像有4GB，安装完的系统有14GB，但ESD文件仅2.7GB。微软于RS2引入UUP更新，将整个ESD文件分为几十个部分，用户只需要下载需要的部分，在本机上又能组装称完整的安装映像，有效的减小了下载数据量。DISM++与库wimlib可以压缩、解压、解密ESD文件。
 
+[DSIM++下载](http://www.chuyu.me/zh-Hans/)
+
 ## 下载Windows10
 
 ms.hit.edu.cn的Windows10版本太老了，不建议使用。
@@ -72,7 +74,9 @@ ms.hit.edu.cn的Windows10版本太老了，不建议使用。
 
 [媒体创建工具下载页面](https://www.microsoft.com/zh-cn/software-download/windows10)
 
-可以选择升级此电脑，生成ISO文件或制造U盘安装工具。制作U盘安装工具时需要U盘容量大于8GB,且需要格式化U盘。
+媒体创建工具可以选择升级此电脑，生成ISO文件或制作U盘安装工具。制作U盘安装工具时需要U盘容量大于8GB,且需要格式化U盘。
+
+媒体创建工具尽量下载新版，因为旧版的创建工具不能下载新版的Windows。
 
 ### 微软直链下载
 
@@ -80,13 +84,15 @@ ms.hit.edu.cn的Windows10版本太老了，不建议使用。
 
 [正式版](https://tb.rg-adguard.net/index.php)
 
+Windows （Final）和 ESD - Electronic Software Download 都可以下载到Windows，但推荐使用ESD，因为一个ESD可以包含多个版本（edition），且通常体积较小。ESD文件需要转换成ISO文件，可以通过DISM++进行。下载地址见前文。
+
 [insider preview与没有正式推送的版本](https://uup.rg-adguard.net/index.php)
 
 在网页上选择需要的系统版本（version），语言和版本（edition），在标明的过期时间内下完即可，过期后刷新网页重新获取。
 
-UUP版需要把所有文件都下载下来，All links for your case:提供了文件列表，支持批量下载的下载器可以使用。下载完成后将File renaming:下的文字保存为bat文件（如rename.bat)放置在下载目录，双击执行，文件即被重命名。随后有校验SHA-1 checksums:请一定校验。随后打开convert-UUP，指定文件保存的目录，然后选择获取install.wim还是整个ISO文件，随后就能得到目标文件。
+这种版本需要把列表中所有文件都下载下来，All links for your case:提供了文件列表，支持批量下载的下载器可以使用。下载完成后将File renaming:下的文字保存为bat文件（如rename.bat)放置在下载目录，双击执行，文件即被重命名。随后有校验SHA-1 checksums:请一定校验。随后打开convert-UUP，指定文件保存的目录，然后选择获取install.wim还是整个ISO文件，随后就能得到目标文件。
 
-大家也可以通过uup downloader下载，和网站uup.rg-adguard.net原理一样。
+大家也可以通过uup downloader下载，和网站uup.rg-adguard.net原理一样,但使用本地php网站下载，全自动搜索下载校验。工具见UUP.7z,[源码](https://gitlab.com/uup-dump)
 
 ### MSDN版
 
@@ -166,15 +172,15 @@ setup.exe运行后，会创建$windows.~BT文件夹，内部包含了升级需�
 
 #### BIOS+U盘
 
-推荐使用方法0。PE的制作见PE一章。
+推荐使用方法0。安装与PE统一介质制作见PE一章。
 
 ##### 方法0
 
-将ISO文件保存到安装有PE的U盘上。
+将ISO文件保存到安装有PE的U盘上。使用PE中的工具安装。此方法能确保安装到正确的分区。
 
 ##### 方法1
 
-将ISO中的文件全部复制到U盘一个分区的根目录，确保这个分区格式是FAT32/NTFS/ExFAT中的一种，然后打开bootice，在物理磁盘标签页目标磁盘下拉栏选择你的U盘，点击“主引导记录（M)”按钮，弹出的对话框选择Windows NT 5.x / 6.x MBR 点击安装/配置，弹出的对话框点击windows NT 6.x MBR，弹出“成功更新主引导记录”，关闭后回到主窗口，点击分区引导记录（P），目标分区选择解压文件到的分区，下面选择BOOTMGR 引导程序（FAT/FAT32/NTFS/ExFAT），点击安装/配置，弹出的对话框点击确定。弹出“成功更新该分区的PBR！”点确定。安装介质就制造完成了。
+将ISO中的文件全部复制到U盘一个分区的根目录，确保这个分区格式是FAT32/NTFS/ExFAT中的一种（建议fat32），然后打开bootice，在物理磁盘标签页目标磁盘下拉栏选择你的U盘，点击“主引导记录（M)”按钮，弹出的对话框选择Windows NT 5.x / 6.x MBR 点击安装/配置，弹出的对话框点击windows NT 6.x MBR，弹出“成功更新主引导记录”，关闭后回到主窗口，点击分区引导记录（P），目标分区选择解压文件到的分区，下面选择BOOTMGR 引导程序（FAT/FAT32/NTFS/ExFAT），点击安装/配置，弹出的对话框点击确定。弹出“成功更新该分区的PBR！”点确定。安装介质就制造完成了。
 
 建议分区格式为FAT32，这样该启动介质也支持UEFI启动。
 
@@ -196,9 +202,11 @@ setup.exe运行后，会创建$windows.~BT文件夹，内部包含了升级需�
 
 #### UEFI＋U盘
 
+推荐使用方法0。安装与PE统一介质制作见PE一章。
+
 ##### 方法 0
 
-将ISO文件保存到安装有PE的U盘上。
+将ISO文件保存到安装有PE的U盘上。使用PE中的工具安装。此方法能确保安装到正确的分区。
 
 ##### 方法 1
 
@@ -211,6 +219,26 @@ setup.exe运行后，会创建$windows.~BT文件夹，内部包含了升级需�
 ##### 方法　3（不推荐）
 
 下载媒体创建工具下载页面，选择为另一台电脑创建安装介质（U盘、DVD或ISO文件），选择合适的版本（可以取消勾选“对这台电脑使用推荐的选项”），下一步选择你的U盘，等待下载完成。注意，此方法会格式化你的U盘。
+
+#### 移动硬盘
+
+参考方法0与方法1。
+
+#### 光盘
+
+使用刻录机刻录ISO，使用DVD光驱安装
+
+#### 无法启动的疑难解答
+
+##### 对于BIOS
+
+    1.使用正常的PE启动
+    2.请按BIOS制作启动盘的方法1第一段重新使用BootIce写入MBR与PBR
+
+##### 对于UEFI
+
+    1.使用正常的PE启动
+    2.使用7zip打开install.wim，找到1\Windows\Boot\EFI\bootmgfw.efi,解压出来重命名为BOOTX64.EFI，替换/EFI/BOOT/BOOTX64.EFI
 
 ### 开始安装
 
