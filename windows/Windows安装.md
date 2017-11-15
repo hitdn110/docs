@@ -37,10 +37,10 @@
                 fonts（同/boot/fonts）
                 resources（同/boot/resources）
                 bcd(boot configration data,启动配置数据，内部数据与/boot/bcd不通用)
-                cdboot.efi（用于UDF格式光盘，可以启动bootmgr.efi）
-                cdboot_noprompt.efi（用于UDF格式光盘，没有“Press any key to boot from CD ...”，会启动bootmgr.efi）
-                efisys.bin（用微软官方工具oscdimg生成可引导光盘ISO时使用，支持的光盘格式为ISO 9660 DVD，会启动bootmgr.efi，是一个软盘镜像）
-                efisys_noprompt.bin（用微软官方工具oscdimg生成可引导光盘ISO时使用，支持的光盘格式为ISO 9660 DVD，会启动bootmgr.efi，是一个软盘镜像）
+                cdboot.efi（用于UDF格式光盘，可以加载bootmgr.efi）
+                cdboot_noprompt.efi（用于UDF格式光盘，没有“Press any key to boot from CD ...”，会加载bootmgr.efi）
+                efisys.bin（用微软官方工具oscdimg生成可引导光盘ISO时使用，支持的光盘格式为ISO 9660 DVD，会加载bootmgr.efi，是一个FAT文件系统软盘镜像）
+                efisys_noprompt.bin（用微软官方工具oscdimg生成可引导光盘ISO时使用，支持的光盘格式为ISO 9660 DVD，会加载bootmgr.efi，是一个文件系统软盘镜像）
                 memtest.efi（内存测试，似乎不支持语言包）
     sources（安装文件）
         install.wim（系统映像，含有多个版本的映像，也可能是install.esd）
@@ -55,8 +55,10 @@
     support（别的文件）
     autorun.inf（自动运行）
     bootmgr（引导加载器，BIOS启动使用，需要引导扇区载入）
-    bootmgr.efi（引导加载器，UEFI启动时使用，但不是UEFI应用，需要bootx64.efi，cdboot.efi，cdboot_noprompt.efi载入）
+    bootmgr.efi（引导加载器主体部分，UEFI启动时使用，但不是UEFI应用，需要bootx64.efi，cdboot.efi，cdboot_noprompt.efi载入）
     setup.exe（在Windows升级时使用的程序，会启动/sources/setup.exe）
+
+关于efisys.bin:由于光盘文件系统CDFS与UDF都不是UEFI标准中可以使用的ESP分区,因此有的主板(很少)不支持从光盘启动,微软为了解决问题,在其官方光盘中存放了两个分区,一个是大的UDF分区,一个是很小的只有/efi/boot/bootx64.efi这一个文件的FAT分区,这个文件会被这些主板加载,文件含有UDF文件系统驱动,会加载bootmgr.efi.如果主板支持UDF分区，则会启动UDF下的/efi/boot/bootx64.efi，同样加载bootmgr.efi．由于U盘启动不需要这么做,因此可以删掉bootmgr.efi、cdboot.efi、cdboot_noprompt.efi、efisys.bin、efisys_noprompt.bin，并使用7zip打开install.wim，找到1\Windows\Boot\EFI\bootmgfw.efi,解压出来重命名为BOOTX64.EFI，替换/EFI/BOOT/BOOTX64.EFI
 
 ### 关于wim与esd
 
@@ -241,6 +243,12 @@ setup.exe运行后，会创建$windows.~BT文件夹，内部包含了升级需�
     2.使用7zip打开install.wim，找到1\Windows\Boot\EFI\bootmgfw.efi,解压出来重命名为BOOTX64.EFI，替换/EFI/BOOT/BOOTX64.EFI
 
 ### 开始安装
+
+#### 安装前对固件的判断
+
+推荐大家安装最新版的Windows10,如非特殊情况(如配置过差,老教授等接受新事物能力较差的人)不建议安装Windows7,永远不建议安装Windows Xp,vista,8(已经停止支持),8.1(界面奇葩,用户很少,微软几乎放弃除安全补丁外的服务支持).
+
+建议使用UEFI引导安装Windows10,尤其是固态硬盘.如果之前的操作系统为BIOS启动,也建议手动转换为GPT磁盘并创建EFI分区（详见分区．ｍｄ）改为UEFI启动.少数预装Windows8甚至Windows7的老电脑(尤其是联想的一些win8电脑)由于兼容性问题不容易安装成功,如果尝试多次无法UEFI引导，可以换回BIOS启动
 
 #### 方法0：使用WinNTSetup
 

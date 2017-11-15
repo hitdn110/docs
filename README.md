@@ -1,4 +1,4 @@
-# diannao110
+# 电脑110
 
 本repo用于哈工大电脑110俱乐部教学用
 
@@ -17,3 +17,17 @@
 [1.CPU](CPU/CPU.md)
 
 [2.内存](memory/内存.md)
+
+[3.主板](motherboard/主板.md)
+
+[4.显卡](Graphicscard/显卡.md)
+
+[5.存储](storage/外部存储器.md)
+
+[6.历史](history/历史.md)
+
+[7.固件](firmware/主板固件.md)
+
+[8.windows](Windows/Windows.md)
+
+[9.网络](net/net.md)
